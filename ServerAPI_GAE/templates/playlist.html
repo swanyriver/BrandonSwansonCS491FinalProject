@@ -1,0 +1,170 @@
+{% macro playlistsStyle() -%}
+    <style>
+        .snippetEmbed {
+            height: 300px;
+            width: 400px;
+        }
+
+        .snippetPanel {
+            width: 1250px;
+        }
+
+        .panel-heading * {
+            margin-left: 10px;
+        }
+
+        .snippetNotes {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .notes-input {
+            width: 100%;
+            height: 300px;
+        }
+
+        .snippetPanel .panel-footer > div {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .checkedForRemoval {
+            border: thick dashed indianred;
+        }
+    </style>
+{%- endmacro %}
+
+{% macro deleteCheck(index) -%}
+    <div class="btn btn-danger pull-left removeButton">
+        <input class="removeSnippetCheck" type="checkbox" name="snippetIndex" value="{{ index }}">
+        <span class="glyphicon glyphicon-trash"></span>
+        Remove Snippet from List
+    </div>
+{%- endmacro %}
+
+{% macro youtubeThumbnail(videoId, num) -%}
+    <img class="preview_thumbnail" src="http://img.youtube.com/vi/{{ videoId }}/{{ num }}.jpg">
+{%- endmacro %}
+
+
+{% macro youtubeEmbed(snpt) -%}
+    <iframe
+            class="snippetEmbed"
+            src="https://www.youtube.com/embed/{{ snpt.videoID }}?start={{ snpt.startTime }}&end={{ snpt.endTime }}&version=3"
+            frameborder="0"></iframe>
+{%- endmacro %}
+
+
+{% macro snippet(snpt, delete, index) -%}
+    <div class="panel panel-default snippetPanel">
+        <div class="panel-heading">
+            {% if delete %} {{ deleteCheck(index) }} {% endif %}
+            <h3 class="panel-title snippet-title pull-left">
+                <span>{{ snpt.title }}</span>
+            </h3>
+            <div class="panel-title time-range pull-right">
+                End-Time:{{ snpt.endTime }}
+            </div>
+            <div class="panel-title time-range pull-right">
+                Start-Time:{{ snpt.startTime }}
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body row">
+            <div class="col-md-4"> {{ youtubeEmbed(snpt) }} </div>
+            <div class="snippetNotes col-md-8">{% if snpt.notes %}{{ snpt.notes }}{% endif %}</div>
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro input(obj, name, type="text", key=None, required=true) -%}
+    <input type="{{ type }}" name="{% if key != None %}{{ key }}_{% endif %}{{ name }}" value="{{ obj[name] }}"{% if required %} required {% endif %}>
+{%- endmacro %}
+
+{% macro editSnippet(snpt, key) -%}
+    <div class="panel panel-default snippetPanel" id="snippetPanel-{{ key }}">
+        <input type="hidden" name="key" value="{{ key }}">
+        <div class="panel-heading">
+            <div class="updown pull-left">
+                <label class="btn btn-primary up-button">
+                    <span class="glyphicon glyphicon-triangle-top"></span>
+                    Move Up
+                </label>
+                <label class="btn btn-primary down-button">
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    Move Down
+                </label>
+            </div>
+            <h3 class="panel-title snippet-title pull-left">
+                {{ input(snpt, "title", key=key) }}
+            </h3>
+            <div class="panel-title time-range pull-right">
+                End-Time: {{ input(snpt, "endTime", type="number", key=key) }}
+            </div>
+            <div class="panel-title time-range pull-right">
+                Start-Time:{{ input(snpt, "startTime", type="number", key=key) }}
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body row">
+            <div class="col-md-4"> {{ youtubeEmbed(snpt) }} </div>
+            {{ input(snpt, "videoID", type="hidden", key=key)}}
+            <div class="snippetNotes col-md-8">
+                <textarea class="notes-input" name="{{ key }}_notes">{{ snpt.notes or '' }}</textarea>
+            </div>
+        </div>
+{#        <div class="panel-footer">#}
+{#            <label>Preview Thumbnail</label><br>#}
+{#            <small class="text-muted">Used on homepage playlist previews only</small><br>#}
+{#            {% for i in range(1,4) %}#}
+{#                <div class="thumbnail-option">#}
+{#                    <input type="radio" name="{{ key }}_selectedThumbnail" value="{{ i }}" {% if snpt.selectedThumbnail == i%}checked{% endif %}>#}
+{#                    {{ youtubeThumbnail(snpt.videoID, i) }}#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#            <div class="clearfix"></div>#}
+{#        </div>#}
+    </div>
+{%- endmacro %}
+
+{% macro playlist(p, delete=false) -%}
+    <div class="playlist">
+        {% for s in p.snippets %}
+            {{ snippet(s, delete, loop.index0) }}
+        {% endfor %}
+    </div>
+{%- endmacro  %}
+
+{% macro editPlaylist(p) -%}
+    <div class="playlist">
+    {% for s in p.snippets %}
+        {{ editSnippet(s, loop.index0) }}
+    {% endfor %}
+    </div>
+{%- endmacro %}
+
+{% macro playlist_preview(p) -%}
+    <div class="playlist_preview">
+        <a href="{{ p.keyForLink() }}">
+            <div class="panel panel-default playlist_preview_panel">
+                <div class="panel-heading">
+                    <div class="panel-title pull-left">
+                        {{ p.title }}
+                    </div>
+                    <div class="panel-title creator pull-right">
+                        {{ p.creator }}
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-body">
+                    <!-- p.snippets  = {{ p.snippets }}-->
+                    {% for snpt in p.snippets %}
+                        <!-- {{ snpt }} -->
+{#                        {{ youtubeThumbnail(snpt.videoID, snpt.selectedThumbnail) }}#}
+                        {{ youtubeThumbnail(snpt.videoID, 1) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </a>
+    </div>
+{%- endmacro %}

@@ -1,0 +1,21 @@
+{% extends "main.html" %}
+{% block title %} Create Playlist {% endblock %}
+{% block navTitle %} Create Playlist {% endblock %}
+{% block navRight %}
+    {{ cancelButton("/") }}
+{% endblock %}
+
+{% block body %}
+    <form action="/playlist/" method="post">
+        <input type="hidden" name="fromUI">
+        <fieldset class="form-group">
+            <label>Creator's Email address (optional)</label>
+            <input name="creator" type="email" class="form-control" id="creatorEmail" placeholder="Anonymous">
+        </fieldset>
+        <fieldset class="form-group">
+            <label>Playlist Title</label>
+            <input name="title" type="text" class="form-control" id="playlistTitle" placeholder="Enter title" required>
+        </fieldset>
+        {{ submitButton() }}
+    </form>
+{% endblock body %}

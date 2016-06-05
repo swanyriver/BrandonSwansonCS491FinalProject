@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.brandonswanson.assignment4">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <!--
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                &lt;!&ndash; Accepts URIs that begin with "http://API_ROOT/playlist/” &ndash;&gt;
+                <data android:scheme="http"
+                    android:host="swansonbassign4.appspot.com" />
+                -->
+
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SnippetViewActivity"
+            android:label=""
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.brandonswanson.assignment4.MainActivity" />
+
+            <intent-filter android:label="View Playlist">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://API_ROOT/playlist/” -->
+                <data
+                    android:host="swansonbassign4.appspot.com"
+                    android:pathPrefix="/playlist/"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AddPlaylistActivity"
+            android:label="@string/title_activity_add_playlist"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddEditSnippetActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_add_edit_snippet"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:label="User Account"
+            android:windowSoftInputMode="stateVisible|adjustResize"/>
+    </application>
+
+</manifest>

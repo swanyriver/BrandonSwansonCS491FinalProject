@@ -1,0 +1,146 @@
+{% macro css(src) -%}
+<link href="css/{{ src }}" rel="stylesheet">
+{%- endmacro %}
+
+{% macro js(src) -%}
+<script src="js/{{ src }}"></script>
+{%- endmacro %}
+
+{#    {{ navRightButton(name="", glyph="", link="", theme="") }}#}
+{% macro navRightButton(name, glyph, link, theme="default") -%}
+    <a href="{{ link }}" type="button" class="btn btn-{{ theme }} navbar-btn pull-right">
+      <span class="glyphicon glyphicon-{{ glyph }}"></span>{{ name }}
+    </a>
+{%- endmacro  %}
+
+{% macro cancelButton(link) -%}
+    {{ navRightButton("cancel", "remove", link, theme="danger") }}
+{%- endmacro  %}
+
+{% macro submitButton() -%}
+    <button type="submit" class="btn btn-success submit-button">Submit</button>
+{%- endmacro %}
+
+{% macro alert(class, text) -%}
+    <div class="alert alert-dismissible alert-{{ class }}" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+     {{ text }}
+    </div>
+{%- endmacro %}
+
+<!DOCTYPE html>
+<html lang="en">
+{% autoescape true %}
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Snippet Playlists{% endblock %}</title>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    {{ css("bootstrap.min.css") }}
+
+    <style>
+        .nav.nav-center {
+            display: inline-block;
+            left: 0;
+            right: 0;
+            margin:0;
+            float:none;
+        }
+
+        .navbar-inner {
+            text-align:center;
+        }
+
+        .page-title {
+            font-size: x-large;
+            color: white;
+            vertical-align: bottom;
+        }
+
+        .navbar-inner * {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        body {
+            padding: 15px;
+        }
+
+    </style>
+    {% block cssSource %} {% endblock %}
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    {% block bodyOpen %}{% endblock %}
+    {% block navbar %}
+        <nav id="navbar" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+          <div class="navbar-inner">
+            <a href="/" type="button" class="btn btn-default navbar-btn pull-left">
+              <span class="glyphicon glyphicon-home"></span>Home
+            </a>
+
+            <span class="nav nav-center page-title">{% block navTitle %}Snippet Playlists{% endblock %}</span>
+
+            {% block navRight %}
+                {#{{ navRightButton("Create Playlist", "plus", "/playlist/?action=create", theme="success") }}#}
+            {% endblock %}
+
+          </div>
+        </nav>
+
+        <script>
+        $(document).ready(function() {
+            var navbar = document.getElementById('navbar');
+            var blocker = document.getElementById('blocker');
+
+            var height = navbar.clientHeight;
+
+            blocker.setAttribute('style' , 'display:block;height:' + height);
+            blocker.style.height = height + 'px';
+            console.log('resize:' + height);
+        });
+        </script>
+
+        <div id="blocker"></div>
+    {% endblock navbar %}
+    {% block status_mesage %}
+        {% if status %}
+            {{ alert("success", status) }}
+        {% endif %}
+        {% if warning %}
+            {{ alert("danger", warning) }}
+        {% endif %}
+    {% endblock status_mesage %}
+    {% block body %}
+        {%  import "playlist.html" as Playlist %}
+        {% if playlists %}
+            {% for p in playlists %}
+                {{ Playlist.playlist_preview(p) }}
+            {% endfor %}
+        {% else %}
+            <div class="empty">There are currently no playlists</div>
+            <a href="/playlist/?action=create" type="button" class="btn btn-success">
+              <span class="glyphicon glyphicon-plus"></span>Create Playlist
+            </a>
+        {% endif %}
+    {% endblock body %}
+
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    {{ js("bootstrap.min.js") }}
+
+    {% block bodyClose %} {% endblock %}
+    {% block jsSource %} {% endblock %}
+  </body>
+</html>
+{% endautoescape %}

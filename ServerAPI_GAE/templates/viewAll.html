@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+{% import "playlist.html" as playlist %}
+{% block title %} View All {% endblock %}
+{% block cssSource %} {{ playlist.playlistsStyle() }} {% endblock %}
+{% block body %}
+    {% for p in playlists %}
+        {{ playlist.playlist(p) }}
+        <hr>
+    {% endfor %}
+{% endblock body %}

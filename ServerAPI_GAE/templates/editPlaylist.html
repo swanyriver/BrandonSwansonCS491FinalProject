@@ -1,0 +1,72 @@
+{% extends "view.html" %}
+{% import "playlist.html" as PlaylistTemplate %}
+{% block title %} Edit Playlist {% endblock %}
+{% block cssSource %}
+    {{ PlaylistTemplate.playlistsStyle() }}
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block bodyOpen %}
+    <form action="/edit/" method="post">
+    {{ playlist.keyForForm()|safe }}
+{% endblock %}
+
+{% macro submit(class) -%}
+<Button type="submit" class="btn btn-primary {{ class }}">
+<span class="glyphicon glyphicon-floppy-save"></span>Save Edits
+</Button>
+{%- endmacro %}
+
+{% block navRight %}
+    {{ cancelButton("/view/?" + playlist.keyForLink()) }}
+    {% if playlist.snippets %}{{ submit("navbar-btn pull-right") }}{% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if playlist.snippets %}
+        {{ PlaylistTemplate.editPlaylist(playlist) }}
+    {% else %}
+        There are currently no snippets in this playlist
+        <a href="/add/?{{ playlist.keyForLink() }}" type="button" class="btn btn-success">
+            <span class="glyphicon glyphicon-plus"></span> Add Snippet
+        </a>
+    {% endif %}
+{% endblock %}
+
+
+{% block bodyClose %}
+    {% if playlist.snippets %}{{ submit("") }} {% endif %}
+    </form>
+{% endblock %}
+
+{% block jsSource %}
+    <script>
+    $(document).ready(function () {
+        $(".up-button").click(function (e) {
+            var snipet_panel = $(this).parent().parent().parent();
+            var pred = snipet_panel.prev('.snippetPanel')[0];
+            snipet_panel = snipet_panel[0];
+            if (pred.classList.contains('snippetPanel')){
+                pred.parentElement.removeChild(snipet_panel);
+                pred.parentElement.insertBefore(snipet_panel,pred);
+            } else {
+                console.log("already on top")
+            }
+        });
+        $(".down-button").click(function (e) {
+            var snipet_panel = $(this).parent().parent().parent();
+            var next = snipet_panel.next('.snippetPanel')[0];
+            snipet_panel = snipet_panel[0];
+            if (next && next.classList.contains('snippetPanel')){
+                snipet_panel.parentElement.removeChild(next);
+                snipet_panel.parentElement.insertBefore(next,snipet_panel);
+            } else {
+                console.log("already on bottom")
+            }
+        });
+    });
+    </script>
+{% endblock %}
+
